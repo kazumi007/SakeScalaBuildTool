@@ -60,6 +60,13 @@ class Environment {
     def isWindows() = {
         Environment.getSystemProperty("os.name").startsWith("Windows")
     }
+
+    def scalaCommand() = if (Environment.environment.isWindows) "scala.bat" else "scala"
+
+    def sakeCommand() = if (Environment.environment.isWindows) "sake.bat" else "sake"
+
+    def scalacCommand() = if (Environment.environment.isWindows) "scalac.bat" else "scalac"
+
 }
 
 object Environment {

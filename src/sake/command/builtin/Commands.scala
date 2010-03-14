@@ -61,10 +61,9 @@ trait Commands {
 
     val echo = new EchoCommand()
 
-    val scala  = new JVMCommand(if (Environment.environment.isWindows()) "scala.bat"
-				else "scala")
-    val scalac = new JVMCommand(if (Environment.environment.isWindows()) "scalac.bat" 
-				else "scalac", 'files -> ".")
+    val scala  = new JVMCommand(Environment.environment.scalaCommand)
+
+    val scalac = new JVMCommand(Environment.environment.scalacCommand, 'files -> ".")
 
     val specs  = new SpecCommand()
 

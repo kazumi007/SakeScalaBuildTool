@@ -14,8 +14,7 @@ import sake.util._
  * @note Must run as a separate process to pick up any newly compiled files, rather than reading what's in the sake.jar file!
  */
 class SpecCommand(defaultOptions: Option[Map[Symbol, Any]]) 
-    extends JVMCommand(if (Environment.environment.isWindows) "scala.bat"
-		       else "scala", defaultOptions){
+    extends JVMCommand(Environment.environment.scalaCommand, defaultOptions){
 
     def this(defaultOpts: Map[Symbol, Any]) = this(Some(defaultOpts))
 
