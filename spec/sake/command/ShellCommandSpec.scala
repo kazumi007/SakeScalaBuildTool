@@ -147,7 +147,11 @@ object ShellCommandSpec extends Specification {
             val cmd = new ShellCommand("shcmd") {
                 override def makeFilesLister = FakeFileForSpecs.fakeFilesFinder
             }
-            cmd('files -> "foo/**/*Spec.class")
+            if (Environment.environment.fileSeparator=="/") {
+              cmd('files -> "foo/**/*Spec.class")
+            } else {
+              cmd('files -> "foo\\**\\*Spec.class")
+            }
             val actual = byteStream.toString()
             val expected = FakeFileForSpecs.fakeFilesExpected.reduceLeft(_+" "+_)
             byteStream.toString() must be matching ("""shcmd\s+(?!-files)\s*""" + expected)
@@ -235,7 +239,7 @@ object ShellCommandSpec extends Specification {
             val outputFile = new FakeFile("toss.out")
             val cmd = new ShellCommand("shcmd")
             cmd('command -> "cat", 'inputText -> "hello world!", 'outputFile -> outputFile)
-            outputFile.stringForReading mustEqual "hello world!\n"
+            outputFile.stringForReading mustEqual "hello world!" + Environment.environment.lineSeparator
         }
 
         "map 'inputText -> String to the input written to the subprocess" in {
@@ -258,7 +262,7 @@ object ShellCommandSpec extends Specification {
             val outputFile = new FakeFile("toss.out")
             val cmd = new ShellCommand("shcmd")
             cmd('command -> "cat", 'inputFile -> tempFile, 'outputFile -> outputFile)
-            outputFile.stringForReading mustEqual "hello world!\n"
+            outputFile.stringForReading mustEqual "hello world!" + Environment.environment.lineSeparator
         }
 
         "map 'outputFile -> sake.util.File to the sink for output written from the subprocess" in {

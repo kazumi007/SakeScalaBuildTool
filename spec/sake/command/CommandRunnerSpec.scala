@@ -55,7 +55,7 @@ object CommandRunnerSpec extends Specification {
             val reader = new BufferedReader(file.reader)
             while(true) {
                 reader.readLine() match {
-                    case null => return sb.toString()
+                    case null => {reader.close();return sb.toString()}
                     case line => sb.append(line+Environment.environment.lineSeparator)
                 }
             }
@@ -127,10 +127,20 @@ object CommandRunnerSpec extends Specification {
     protected def runSuccessfulTestCommand = {
         val outputFile = new FakeFile("toss.out")
         val environment = Some(Map[Any, Any]('directory -> "lib", 'outputFile -> outputFile))
-        val runner = new CommandRunner("pwd", Nil, environment)
+        val runner = if (Environment.environment.isWindows) {
+           new CommandRunner("cmd", List("/c", "cd"), environment)
+        } else {
+           new CommandRunner("pwd", Nil, environment)
+        }
+
         runner.environment mustEqual environment
         runner.run()
-        outputFile.writer.toString must be matching ("""/lib$""")
+        outputFile.writer.toString must be matching (
+                if (Environment.environment.isWindows) {
+                  """\\lib$"""
+                } else {
+                  """/lib$"""
+                })
     }    
 
     protected def runFailedTestCommand = {
