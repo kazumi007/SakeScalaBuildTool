@@ -48,6 +48,7 @@ class CommandRunner(val command: String, val arguments: List[String], val enviro
                 case null => {
                     writer.flush()
                     writer.close()
+                    reader.close()
                     return
                 }
                 case line => {
@@ -58,12 +59,20 @@ class CommandRunner(val command: String, val arguments: List[String], val enviro
     }
     
     protected def handleOutputFor(process: Process) = {
+        var isConsole = false
         val writer: JWriter = fileOutputForProcess match {
-            case None => new JBufferedWriter(new JOutputStreamWriter(Console.out))
+            case None => {
+              isConsole = true
+              new JBufferedWriter(new JOutputStreamWriter(Console.out))
+            }
             case Some(f) => f.writer
         }
         val out = new JBufferedReader(new JInputStreamReader(process.getInputStream()))
         processCommandOutput(writer, out)
+        out.close
+        if (!isConsole) {
+          writer.close
+        }
     }
     
     protected def processCommandOutput(writer: JWriter, out: JBufferedReader): Unit = {
