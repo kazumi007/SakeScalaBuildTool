@@ -1,21 +1,15 @@
-::#!
 @echo off
 rem Warning: untested!
 if "%SAKE_HOME%" == "" (
-  set _SAKE_TMP=%~dp0
-  set SAKE_HOME=%_SAKE_TMP%\..\
+  set SAKE_HOME=%~dp0..\
 )
 
 set SAKE_CLASSPATH=
 for %%f in ("%SAKE_HOME%\lib\*") do call :add_cpath "%%f"
 
-call scala -classpath %SAKE_CLASSPATH%
+call scala -classpath %SAKE_CLASSPATH% -i %~dp0build_all.scala
 
 goto :eof
-
-::!#
-:load sake.scala
-build("%*")
 
 :add_cpath
   if "%SAKE_CLASSPATH%"=="" (
@@ -24,3 +18,4 @@ build("%*")
     set SAKE_CLASSPATH=%SAKE_CLASSPATH%;%~1
   )
 goto :eof
+
