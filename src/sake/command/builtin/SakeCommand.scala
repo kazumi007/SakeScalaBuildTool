@@ -8,7 +8,10 @@ import sake.util._
  * Command for recursive invocations of sake (as a new process), usually in a different directory.
  */
 class SakeCommand() 
-    extends JVMCommand(Environment.environment.sakeCommand , Some(Map[Symbol,Any]())) {
+    extends JVMCommand(Environment.environment.sakeCommand ,
+        Some(if (Environment.environment.isWindows) Map[Symbol, Any]('Xnojline -> "") else
+          Map[Symbol,Any]()
+        )) {
     
     override def optionsPostFilter(options: Map[Symbol,Any]) = {
         val sakefile = options.getOrElse('f, options.getOrElse('file, "")) match {
