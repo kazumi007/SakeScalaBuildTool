@@ -153,7 +153,11 @@ object ShellCommandSpec extends Specification {
               cmd('files -> "foo\\**\\*Spec.class")
             }
             val actual = byteStream.toString()
-            val expected = FakeFileForSpecs.fakeFilesExpected.reduceLeft(_+" "+_)
+            val expected =if (Environment.environment.fileSeparator=="/") {
+                 FakeFileForSpecs.fakeFilesExpected.reduceLeft(_+" "+_)
+              } else {
+                 FakeFileForSpecs.fakeFilesExpected.reduceLeft(_+" "+_).replace("\\", "\\\\")    
+              }
             byteStream.toString() must be matching ("""shcmd\s+(?!-files)\s*""" + expected)
         }
 
