@@ -3,6 +3,7 @@ package sake.command.builtin
 import org.specs._ 
 import sake.util._
 import sake.environment.Environment._
+import java.io.{File => JFile}
 
 object SpecCommandSpec extends Specification {
     def makeTestSpecCommand(expectedPath: String, expectedPattern: String) = {
@@ -47,7 +48,7 @@ object SpecCommandSpec extends Specification {
         "throw a build error" in {
             new SpecCommand() (
                 'classpath -> environment.classpath,
-                'path -> "./spec/**/*.scala",
+                'path -> new JFile("./spec/**/*.scala").getPath,
                 'pattern -> "FailingSpek"
             ) must throwA[BuildError]
         }
@@ -56,7 +57,7 @@ object SpecCommandSpec extends Specification {
     "Invoking a failing specs" should {
         "return Passed" in {
             new SpecCommand() (
-                'path -> "./spec/**/*.scala",
+                'path -> new JFile("./spec/**/*.scala").getPath,
                 'pattern -> "PassingSpek").success must beTrue
         }
     }
