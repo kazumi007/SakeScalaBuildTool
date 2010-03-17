@@ -1,6 +1,5 @@
 @echo off
-rem todo: need to process scala options
-
+rem sake for Windows need to add -Xnojline option on scala command.
 @setlocal
 
 if "%SAKE_HOME%" == "" (
@@ -20,6 +19,8 @@ if (%1) == () goto exec
 if (%1) == (-h) call :show_help & goto :eof
 if (%1) == (-i) set _INTERACTIVE=true & goto next
 if (%1) == (-f) shift & set _SAKE_FILE=%1 & goto next
+if (%1) == (-classpath) shift & call :add_cpath %1 & goto next
+
 rem targets 
 if "%_TARGET%"=="" (
  set _TARGET=%1
@@ -33,13 +34,12 @@ goto loop
 
 :exec
 
-
 if (%_TARGET%)==() set _TARGET=all
 
 if (%_INTERACTIVE%) == (true) (
   scala -i %_SAKE_FILE%
 ) else ( 
-  %SAKE_HOME%\bin\sake_stdin.bat %_TARGET% |scala 
+  %SAKE_HOME%\bin\sake_stdin.bat %_TARGET% |scala -Xnojline 
 )
 
 @endlocal
