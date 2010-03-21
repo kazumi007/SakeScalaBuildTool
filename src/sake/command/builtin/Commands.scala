@@ -63,7 +63,7 @@ trait Commands {
 
     val scala  = new JVMCommand(Environment.environment.scalaCommand)
 
-    val scalac = new JVMCommand(Environment.environment.scalacCommand, 'files -> ".")
+    val scalac = new JVMCommand(Environment.environment.scalacCommand)
 
     val specs  = new SpecCommand()
 
