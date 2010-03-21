@@ -26,8 +26,14 @@ class CommandRunner(val command: String, val arguments: List[String], val enviro
         processBuilder.command(toJavaArrayList(command :: arguments))
         try {
             val process = processBuilder.start()
-            handleInputFor(process)
+            val inputStreamThread = new Thread() {
+               override def run {
+                 handleInputFor(process)
+               }
+            }
+            inputStreamThread.start
             handleOutputFor(process)
+            inputStreamThread.join
             getStatus(process)
         } catch {
             case th: Throwable => new Failed(Some(th), Some(th.getMessage()))
